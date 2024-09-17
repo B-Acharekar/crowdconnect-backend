@@ -1,8 +1,11 @@
 package com.crowdconnect.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import com.crowdconnect.service.JwtUtils;
 import com.crowdconnect.service.UserService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
 public class UserController {
 
@@ -28,13 +32,17 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
         if (userService.existsByEmail(userDto.getEmail())) {
-            return ResponseEntity.badRequest().body("Email is already in use");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "Email is already in use"));
         }
         try {
             userService.registerUser(userDto);
-            return ResponseEntity.ok("User registered successfully");
+            return ResponseEntity.ok(Map.of("message", "User registered successfully"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering user");
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error registering user"));
         }
     }
 
@@ -42,15 +50,18 @@ public class UserController {
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
-            
             if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Invalid username or password"));
             }
 
-            String jwt = jwtUtils.generateJwtToken(user.getUsername()); // Ensure you pass the correct information
+            String jwt = jwtUtils.generateJwtToken(user.getUsername());
             return ResponseEntity.ok(new JWTResponse(jwt));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during login");
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error during login"));
         }
     }
 }
