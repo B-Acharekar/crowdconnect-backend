@@ -1,11 +1,13 @@
 package com.crowdconnect.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,4 +66,12 @@ public class UserController {
                     .body(Map.of("message", "Error during login"));
         }
     }
+    
+    @GetMapping("/active-users")
+    public ResponseEntity<List<User>> getActiveUsers() {
+        List<User> activeUsers = userService.getActiveUsers(); // Modify as needed to filter active users
+        return ResponseEntity.ok(activeUsers);
+    }
+    
+
 }
