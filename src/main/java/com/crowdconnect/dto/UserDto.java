@@ -5,6 +5,8 @@ public class UserDto {
     private String email;  // Added email field
     private String password;
     private String role; // Add role field
+    private String securityQuestion; // New field for security question
+    private String securityAnswer;   // New field for security answer
 
     // Getters and Setters
     
@@ -34,5 +36,21 @@ public class UserDto {
     
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+    public String getSecurityAnswer() {
+        return securityAnswer;
+    }
+
+    public void setSecurityAnswer(String securityAnswer) {
+        this.securityAnswer = securityAnswer;
+    }
     
 }

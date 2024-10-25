@@ -24,7 +24,7 @@ public class SolutionController {
     @PostMapping("/problem/{problemId}")
     @PreAuthorize("isAuthenticated()") // Ensure user is logged in
     public ResponseEntity<SolutionDto> submitSolution(@PathVariable("problemId") Long problemId, @RequestBody SolutionDto solutionDto) {
-        SolutionDto solution = solutionService.addSolution(problemId, solutionDto.getDescription(), solutionDto.getUsername());
+        SolutionDto solution = solutionService.addSolution(problemId, solutionDto.getDescription(), solutionDto.getUsername(),solutionDto.getStatus());
         return ResponseEntity.ok(solution);
     }
 
@@ -41,10 +41,12 @@ public class SolutionController {
         return ResponseEntity.ok(solutionDtos);
     }
     
- // Update an existing solution
-    @PutMapping("/{solutionId}")
+    
+ // Endpoint to update the description of a solution
+    @PutMapping("/{solutionId}/description")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SolutionDto> updateSolution(@PathVariable("solutionId") Long solutionId, @RequestBody SolutionDto solutionDto) {
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         
@@ -55,6 +57,25 @@ public class SolutionController {
         }
         
         SolutionDto updatedSolution = solutionService.updateSolution(solutionId, solutionDto.getDescription());
+        return ResponseEntity.ok(updatedSolution);
+    }
+
+    // Endpoint to update the status of a solution
+    @PutMapping("/{solutionId}/status")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SolutionDto> updateSolutionStatus(
+        @PathVariable("solutionId") Long solutionId, @RequestBody SolutionDto solutionDto) {
+    	
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        
+        // Check if the current user is the owner of the solution
+        SolutionDto existingSolution = solutionService.getSolutionWithVotes(solutionId);
+        if (existingSolution.getUsername().equals(currentUsername)) {
+            return ResponseEntity.status(403).build(); // Return 403 Forbidden if not the owner
+        }
+
+        SolutionDto updatedSolution = solutionService.updateSolutionStatus(solutionId, solutionDto.getStatus());
         return ResponseEntity.ok(updatedSolution);
     }
 

@@ -2,6 +2,7 @@ package com.crowdconnect.dto;
 
 import java.time.LocalDateTime;
 
+import com.crowdconnect.model.SolutionStatus;
 import com.crowdconnect.model.VoteType;
 
 public class SolutionDto {
@@ -15,6 +16,7 @@ public class SolutionDto {
     private Long upvoteCount;
     private Long downvoteCount;
     private VoteType userVote;  // Track the user's vote
+    private SolutionStatus status;       // Add status field
 
     // Constructors
     public SolutionDto() {}
@@ -103,5 +105,13 @@ public class SolutionDto {
 
     public void setUserVote(VoteType userVote) {
         this.userVote = userVote;
+    }
+
+    public SolutionStatus getStatus() {
+        return status;  // Getter for status
+    }
+
+    public void setStatus(SolutionStatus status) {
+        this.status = status; // Setter for status
     }
 }

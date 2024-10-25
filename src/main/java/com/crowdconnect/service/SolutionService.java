@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.crowdconnect.dto.SolutionDto;
 import com.crowdconnect.model.Problem;
 import com.crowdconnect.model.Solution;
+import com.crowdconnect.model.SolutionStatus;
 import com.crowdconnect.model.User;
 import com.crowdconnect.model.Vote;
 import com.crowdconnect.model.VoteType;
@@ -35,7 +36,7 @@ public class SolutionService {
     private VoteRepository voteRepository;
 
     // Add solution to a problem (return SolutionDto)
-    public SolutionDto addSolution(Long problemId, String description, String username) {
+    public SolutionDto addSolution(Long problemId, String description, String username, SolutionStatus solutionStatus) {
         Problem problem = problemRepository.findById(problemId)
             .orElseThrow(() -> new RuntimeException("Problem not found"));
 
@@ -46,6 +47,7 @@ public class SolutionService {
         solution.setDescription(description);
         solution.setProblem(problem);
         solution.setCreatedBy(user);
+        solution.setStatus(solutionStatus); // Set default status
 
         // Increment user's contribution count
         user.setContributionCount(user.getContributionCount() + 1);
@@ -84,6 +86,18 @@ public class SolutionService {
 
         // Update the solution's description
         solution.setDescription(newDescription);
+        Solution updatedSolution = solutionRepository.save(solution);
+
+        return mapToDto(updatedSolution); // Convert the updated entity to DTO and return
+    }
+    
+    //update status
+    public SolutionDto updateSolutionStatus(Long solutionId, SolutionStatus solutionStatus) {
+        Solution solution = solutionRepository.findById(solutionId)
+            .orElseThrow(() -> new RuntimeException("Solution not found"));
+
+        // Update the solution's status
+        solution.setStatus(solutionStatus);
 
         Solution updatedSolution = solutionRepository.save(solution);
 
@@ -161,6 +175,7 @@ public class SolutionService {
         dto.setUpdatedAt(solution.getUpdatedAt()); // Set updatedAt timestamp
         dto.setUpvoteCount(voteRepository.countBySolutionAndVoteType(solution, VoteType.UPVOTE)); // Set upvote count
         dto.setDownvoteCount(voteRepository.countBySolutionAndVoteType(solution, VoteType.DOWNVOTE)); // Set downvote count
+        dto.setStatus(solution.getStatus()); // Set the status
         return dto;
     }
 

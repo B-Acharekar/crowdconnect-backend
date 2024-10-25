@@ -32,6 +32,12 @@ public class User {
 
     @Column(name = "is_active")
     private boolean isActive; // New field for active status
+    
+    @Column(name = "security_question")
+    private String securityQuestion;
+
+    @Column(name = "security_answer")
+    private String securityAnswer;
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -54,4 +60,10 @@ public class User {
 
     public boolean isActive() { return isActive; } // Getter for isActive
     public void setActive(boolean isActive) { this.isActive = isActive; } // Setter for isActive
+    
+    public String getSecurityQuestion() { return securityQuestion; }
+    public void setSecurityQuestion(String securityQuestion) { this.securityQuestion = securityQuestion; }
+
+    public String getSecurityAnswer() { return securityAnswer; }
+    public void setSecurityAnswer(String securityAnswer) { this.securityAnswer = securityAnswer; }
 }
